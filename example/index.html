@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Redis subscribe SSE test</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+          <p class="lead">SSE stream</p>
+
+          <p>Once you loaded this page, push something to one of the Redis channels subscribed</p>
+
+          <ul class="list-unstyled"></ul>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+      $(function() {
+
+        var source = new EventSource('/stream');
+        var $list = $('ul');
+
+        // when channelsAsEvents is true, you can listen to specific events...
+
+        source.addEventListener('test-express', handleMessage, false);
+        source.addEventListener('test-koa', handleMessage, false);
+        source.addEventListener('test-koa1', handleMessage, false);
+
+        // otherwise, you can simply listen to generic messages
+
+        source.onmessage = handleMessage;
+
+        function handleMessage(e) {
+          console.log(e);
+
+          $message = $('<li>').html('<strong>' + e.type + '</strong>: ' + e.data);
+          $list.append($message);
+        }
+
+      });
+
+    </script>
+
+  </body>
+</html>
