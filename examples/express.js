@@ -3,10 +3,14 @@
  * Module dependencies
  */
 
-var Subscribe = require('../lib');
+var express = require('express');
+var fs = require('fs');
+var path = require('path');
 
 
 // stream
+
+var Subscribe = require('../lib');
 
 var subscribe = new Subscribe({
   channels: 'test-express',
@@ -15,9 +19,27 @@ var subscribe = new Subscribe({
   port: 6379
 });
 
+
 // express app
 
-var app = require('./apps/express');
+var app = module.exports = express();
+
+app.get('/', function(req, res) {
+  var index = path.join(__dirname, './index.html');
+  fs.createReadStream(index).pipe(res);
+});
+
+app.get('/stream', function(req, res) {
+  req.socket.setTimeout(0);
+
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  subscribe.pipe(res);
+});
 
 var server = app.listen(3000, function() {
   console.log('Listening on port %d', server.address().port);
