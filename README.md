@@ -6,7 +6,7 @@ A [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readab
 Features:
 
 * Can subscribe to one or more channels
-* Can set Redis channel name to SSE `event` property, so publish on `test` channels is equal to listen to `test` event on client-side
+* Can set Redis `channel` name to SSE `event` property, so publish on `test` channel means listening to `test` event on client-side
 * Easy to integrate with [Koa](http://koajs.com) or [Express](http://expressjs.com) frameworks
 
 
