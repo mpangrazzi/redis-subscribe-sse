@@ -7,21 +7,9 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 
-var Subscribe = require('../lib');
+// app
 
-
-// stream
-
-var subscribe = new Subscribe({
-  channels: 'test-express',
-  retry: 5000,
-  host: '127.0.0.1',
-  port: 6379
-});
-
-// express app
-
-var app = express();
+var app = module.exports = express();
 
 app.get('/', function(req, res) {
   var index = path.join(__dirname, './index.html');
@@ -38,8 +26,4 @@ app.get('/stream', function(req, res) {
   });
 
   subscribe.pipe(res);
-});
-
-var server = app.listen(3000, function() {
-  console.log('Listening on port %d', server.address().port);
 });

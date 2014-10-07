@@ -9,22 +9,10 @@ var path = require('path');
 var router = require('koa-router');
 var PassThrough = require('stream').PassThrough;
 
-var Subscribe = require('../lib');
-
-
-// stream
-
-var subscribe = new Subscribe({
-  channels: ['test-koa', 'test-koa1'],
-  retry: 10000,
-  host: '127.0.0.1',
-  port: 6379,
-  channelsAsEvents: true
-});
 
 // koa app
 
-var app = koa();
+var app = module.exports = koa();
 
 app.use(router(app));
 
@@ -45,8 +33,4 @@ app.get('/stream', function *() {
 
   var body = this.body = PassThrough();
   subscribe.pipe(body);
-});
-
-app.listen(3000, function() {
-  console.log('Listening on port 3000');
 });

@@ -4,15 +4,39 @@
   "description": "Stream Redis subscribe events to client with SSE",
   "main": "index.js",
   "author": "Michele Pangrazzi <xmikex83@gmail.com>",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mpangrazzi/redis-subscribe-sse.git"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -t 10000"
+  },
+  "engines": {
+    "node": "0.10.x || 0.11.x"
+  },
   "devDependencies": {
     "co-fs": "^1.2.0",
     "debug": "^2.0.0",
     "express": "^4.9.5",
     "koa": "^0.12.2",
-    "koa-router": "^3.4.0"
+    "koa-router": "^3.4.0",
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
   },
   "dependencies": {
     "redis": "*"
-  }
+  },
+  "keywords": [
+    "redis",
+    "publish",
+    "pub",
+    "sub",
+    "koa",
+    "express",
+    "subscribe",
+    "stream",
+    "sse",
+    "server-sent events"
+  ],
+  "license": "MIT"
 }
