@@ -16,7 +16,6 @@
   },
   "devDependencies": {
     "co-fs": "^1.2.0",
-    "debug": "^2.0.0",
     "express": "^4.9.5",
     "koa": "^0.12.2",
     "koa-router": "^3.4.0",
@@ -24,6 +23,7 @@
     "should": "^4.0.4"
   },
   "dependencies": {
+    "debug": "^2.0.0",
     "redis": "*"
   },
   "keywords": [
