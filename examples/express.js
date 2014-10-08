@@ -10,14 +10,14 @@ var path = require('path');
 
 // stream
 
-var Subscribe = require('../lib');
+var subscribe = require('../lib');
 
-var subscribe = new Subscribe({
+var options = {
   channels: 'test-express',
   retry: 5000,
   host: '127.0.0.1',
   port: 6379
-});
+};
 
 
 // express app
@@ -38,7 +38,12 @@ app.get('/stream', function(req, res) {
     'Connection': 'keep-alive'
   });
 
-  subscribe.pipe(res);
+  var stream = subscribe(options);
+  stream.pipe(res);
+
+  req.on('close', function() {
+    stream.close();
+  });
 });
 
 var server = app.listen(3000, function() {

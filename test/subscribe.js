@@ -4,7 +4,7 @@
  */
 
 var redis = require('redis').createClient();
-var Subscribe = require('../lib');
+var subscribe = require('../lib');
 
 
 describe('Subscribe', function() {
@@ -13,7 +13,7 @@ describe('Subscribe', function() {
     var exception;
 
     try {
-      new Subscribe({});
+      var s = subscribe({});
     } catch(e) { exception = e; }
 
     exception.message.should.equal('option `channels` is required and must be an Array or a String');
@@ -23,7 +23,7 @@ describe('Subscribe', function() {
     var exception;
 
     try {
-      new Subscribe({
+      var s = subscribe({
         channels: ['test'],
         retry: -1
       });
@@ -33,39 +33,39 @@ describe('Subscribe', function() {
   });
 
   it('Should get a Subscribe stream', function() {
-    var subscribe = new Subscribe({
+    var s = subscribe({
       channels: ['test']
     });
 
-    subscribe.should.be.an.instanceof.Subscribe;
-    subscribe.channels.should.eql(['test']);
+    s.should.be.an.instanceof.Subscribe;
+    s.channels.should.eql(['test']);
   });
 
   it('Should get a Subscribe stream with Redis options specified', function() {
-    var subscribe = new Subscribe({
+    var s = subscribe({
       channels: ['test'],
       host: '127.0.0.1',
       port: 6379,
       clientOptions: { enable_offline_queue: false }
     });
 
-    subscribe.should.be.an.instanceof.Subscribe;
-    subscribe.channels.should.eql(['test']);
+    s.should.be.an.instanceof.Subscribe;
+    s.channels.should.eql(['test']);
   });
 
   it('Should stream Redis published messages as SSE', function(done) {
 
     var chunks = 0;
 
-    var subscribe = new Subscribe({
+    var s = subscribe({
       channels: ['test']
     });
 
-    subscribe.on('ready', function() {
+    s.on('ready', function() {
       redis.publish('test', 'test-message');
     });
 
-    subscribe.on('data', function(data) {
+    s.on('data', function(data) {
       if (chunks === 0) {
         data.toString().should.equal('retry: 5000\n');
       }
@@ -83,16 +83,16 @@ describe('Subscribe', function() {
   it('Should associate Redis channels as SSE events if `channelsAsEvents` option is true', function(done) {
     var chunks = 0;
 
-    var subscribe = new Subscribe({
+    var s = subscribe({
       channels: ['named-channel'],
       channelsAsEvents: true
     });
 
-    subscribe.on('ready', function() {
+    s.on('ready', function() {
       redis.publish('named-channel', 'test-message');
     });
 
-    subscribe.on('data', function(data) {
+    s.on('data', function(data) {
       if (chunks === 0) {
         data.toString().should.equal('retry: 5000\n');
       }

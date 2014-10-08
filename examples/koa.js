@@ -12,15 +12,15 @@ var PassThrough = require('stream').PassThrough;
 
 // stream
 
-var Subscribe = require('../lib');
+var subscribe = require('../lib');
 
-var subscribe = new Subscribe({
+var options = {
   channels: ['test-koa', 'test-koa1'],
   retry: 10000,
   host: '127.0.0.1',
   port: 6379,
   channelsAsEvents: true
-});
+};
 
 
 // koa app
@@ -44,8 +44,13 @@ app.get('/stream', function *() {
   this.set('Cache-Control', 'no-cache');
   this.set('Connection', 'keep-alive');
 
-  var body = this.body = PassThrough();
-  subscribe.pipe(body);
+  var stream = subscribe(options);
+
+  this.body = stream;
+
+  this.req.on('close', function() {
+    stream.close();
+  });
 });
 
 

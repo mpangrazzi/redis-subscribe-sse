@@ -27,7 +27,9 @@ npm install redis-subscribe-sse
 
 ### Examples
 
-See `/examples` folder. You can run examples with:
+**Server side**
+
+See `/examples` folder for **Koa** and **Express** examples. You can run them with:
 
 ```
   $ node ./examples/express
@@ -38,77 +40,9 @@ Keep in mind that Koa requires node `0.11.x`. If you want to see [debug](https:/
 
 `$ DEBUG=redis-subscribe-sse node ./examples/express`
 
-But basically:
-
-**Express**
-
-```javascript
-
-  // stream
-
-  var subscribe = new Subscribe({
-    channels: 'test-express',
-    retry: 5000,
-    host: '127.0.0.1',
-    port: 6379
-  });
-
-
-  // express app
-
-  // ...
-
-  app.get('/stream', function(req, res) {
-    req.socket.setTimeout(0);
-
-    res.set({
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive'
-    });
-
-    subscribe.pipe(res);
-  });
-```
-
-**Koa**
-
-```javascript
-
-  // stream
-
-  var subscribe = new Subscribe({
-    channels: ['test-koa', 'test-koa1'],
-    retry: 10000,
-    host: '127.0.0.1',
-    port: 6379,
-    channelsAsEvents: true
-  });
-
-  // koa app
-
-  // NOTE: `app.get` function is provided by `koa-router` module
-
-  app.get('/stream', function *() {
-    this.req.setTimeout(0);
-
-    this.type = 'text/event-stream; charset=utf-8';
-
-    this.set('Cache-Control', 'no-cache');
-    this.set('Connection', 'keep-alive');
-
-    var body = this.body = PassThrough();
-    subscribe.pipe(body);
-  });
-
-
-  app.listen(3000, function() {
-    console.log('Listening on port 3000');
-  });
-
-```
-
 **Client side**
+
+On client side, you can listen to SSE events using EventSource API (or a polyfill):
 
 ```javascript
 
@@ -116,6 +50,10 @@ But basically:
   //       you may have to use a polyfill
 
   var source = new EventSource('/stream');
+
+  source.onopen = function() {
+    console.log('Connected');
+  });
 
   // if you set `channelsAsEvents: true`:
 
