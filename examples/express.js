@@ -12,12 +12,12 @@ var path = require('path');
 
 var subscribe = require('../lib');
 
-var options = {
+var sse = subscribe({
   channels: 'test-express',
   retry: 5000,
   host: '127.0.0.1',
   port: 6379
-};
+});
 
 
 // express app
@@ -38,12 +38,7 @@ app.get('/stream', function(req, res) {
     'Connection': 'keep-alive'
   });
 
-  var stream = subscribe(options);
-  stream.pipe(res);
-
-  req.on('close', function() {
-    stream.close();
-  });
+  sse.pipe(res);
 });
 
 var server = app.listen(3000, function() {

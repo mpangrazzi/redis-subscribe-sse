@@ -7,20 +7,19 @@ var koa = require('koa');
 var fs = require('co-fs');
 var path = require('path');
 var router = require('koa-router');
-var PassThrough = require('stream').PassThrough;
 
 
 // stream
 
 var subscribe = require('../lib');
 
-var options = {
+var sse = subscribe({
   channels: ['test-koa', 'test-koa1'],
   retry: 10000,
   host: '127.0.0.1',
   port: 6379,
   channelsAsEvents: true
-};
+});
 
 
 // koa app
@@ -44,13 +43,7 @@ app.get('/stream', function *() {
   this.set('Cache-Control', 'no-cache');
   this.set('Connection', 'keep-alive');
 
-  var stream = subscribe(options);
-
-  this.body = stream;
-
-  this.req.on('close', function() {
-    stream.close();
-  });
+  this.body = sse;
 });
 
 
