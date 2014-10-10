@@ -12,6 +12,12 @@ var path = require('path');
 
 var subscribe = require('../lib');
 
+/**
+ * To test, publish something on 'test-express' channel
+ *
+ * $ redis-cli publish test-express testmessage
+ */
+
 var sse = subscribe({
   channels: 'test-express',
   retry: 5000,
@@ -22,7 +28,7 @@ var sse = subscribe({
 
 // express app
 
-var app = module.exports = express();
+var app = express();
 
 app.get('/', function(req, res) {
   var index = path.join(__dirname, './index.html');

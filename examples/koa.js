@@ -13,6 +13,13 @@ var router = require('koa-router');
 
 var subscribe = require('../lib');
 
+/**
+ * To test, publish something on 'test-koa' or 'test-koa1' channel
+ *
+ * $ redis-cli publish test-koa testmessage
+ * $ redis-cli publish test-koa1 testmessage1
+ */
+
 var sse = subscribe({
   channels: ['test-koa', 'test-koa1'],
   retry: 10000,
@@ -24,7 +31,7 @@ var sse = subscribe({
 
 // koa app
 
-var app = module.exports = koa();
+var app = koa();
 
 app.use(router(app));
 
