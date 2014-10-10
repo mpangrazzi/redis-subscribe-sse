@@ -1,6 +1,6 @@
 {
   "name": "redis-subscribe-sse",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Stream Redis subscribe events to client with SSE",
   "main": "index.js",
   "author": "Michele Pangrazzi <xmikex83@gmail.com>",
