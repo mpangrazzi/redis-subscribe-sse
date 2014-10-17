@@ -38,5 +38,10 @@
     "sse",
     "server-sent events"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "jshintConfig": {
+    "esnext": true,
+    "expr": true,
+    "noyield": true
+  }
 }

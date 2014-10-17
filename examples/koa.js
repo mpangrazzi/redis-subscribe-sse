@@ -9,10 +9,6 @@ var path = require('path');
 var router = require('koa-router');
 
 
-// stream
-
-var subscribe = require('../lib');
-
 /**
  * To test, publish something on 'test-koa' or 'test-koa1' channel
  *
@@ -20,13 +16,10 @@ var subscribe = require('../lib');
  * $ redis-cli publish test-koa1 testmessage1
  */
 
-var sse = subscribe({
-  channels: ['test-koa', 'test-koa1'],
-  retry: 10000,
-  host: '127.0.0.1',
-  port: 6379,
-  channelsAsEvents: true
-});
+
+// stream
+
+var subscribe = require('../lib');
 
 
 // koa app
@@ -43,6 +36,7 @@ app.get('/', function *() {
 });
 
 app.get('/stream', function *() {
+
   this.req.setTimeout(0);
 
   this.type = 'text/event-stream; charset=utf-8';
@@ -50,7 +44,20 @@ app.get('/stream', function *() {
   this.set('Cache-Control', 'no-cache');
   this.set('Connection', 'keep-alive');
 
+  var sse = subscribe({
+    channels: ['test-koa', 'test-koa1'],
+    retry: 10000,
+    host: '127.0.0.1',
+    port: 6379,
+    channelsAsEvents: true
+  });
+
   this.body = sse;
+
+  this.req.on('close', function() {
+    sse.close();
+  });
+
 });
 
 

@@ -8,24 +8,25 @@ var fs = require('fs');
 var path = require('path');
 
 
-// stream
-
-var subscribe = require('../lib');
-
 /**
  * To test, publish something on 'test-http' channel
  *
  * $ redis-cli publish test-http testmessage
  */
 
-var sse = subscribe({
-  channels: 'test-http'
-});
+
+// stream
+
+var subscribe = require('../lib');
 
 
 // http server
 
 var server = http.createServer(function(req, res) {
+
+  var sse = subscribe({
+    channels: 'test-http'
+  });
 
   if (req.url === '/') {
     var index = path.join(__dirname, './index.html');
@@ -39,7 +40,9 @@ var server = http.createServer(function(req, res) {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
-    sse.pipe(res);
+    sse.pipe(res).on('close', function() {
+      sse.close();
+    });
   }
 
 });

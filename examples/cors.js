@@ -8,19 +8,16 @@ var fs = require('fs');
 var path = require('path');
 
 
-// stream
-
-var subscribe = require('../lib');
-
 /**
  * To test, publish something on 'test-cors' channel
  *
  * $ redis-cli publish test-cors testmessage
  */
 
-var sse = subscribe({
-  channels: 'test-cors'
-});
+
+// stream
+
+var subscribe = require('../lib');
 
 
 // express app
@@ -34,6 +31,11 @@ frontend.get('/', function(req, res) {
 });
 
 backend.get('/stream', function(req, res) {
+
+  var sse = subscribe({
+    channels: 'test-cors'
+  });
+
   req.socket.setTimeout(0);
 
   res.set({
@@ -43,7 +45,10 @@ backend.get('/stream', function(req, res) {
     'Access-Control-Allow-Origin': '*'
   });
 
-  sse.pipe(res);
+  sse.pipe(res).on('close', function() {
+    sse.close();
+  });
+
 });
 
 frontend.listen(3000, function() {
