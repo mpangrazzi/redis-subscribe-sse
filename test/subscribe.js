@@ -111,6 +111,34 @@ describe('Subscribe', function() {
 
   });
 
+  it('Should stream Redis published messages as SSE (using PSUBSCRIBE)', function(done) {
+
+      var chunks = 0;
+
+      var s = subscribe({
+        channels: ['test*'],
+        patternSubscribe: true
+      });
+
+      s.on('ready', function() {
+        redis.publish('test-pattern-subscribe', 'test-pattern-subscribe-message');
+      });
+
+      s.on('data', function(data) {
+        if (chunks === 0) {
+          data.toString().should.equal('retry: 5000\n');
+        }
+
+        if (chunks === 1) {
+          data.toString().should.equal('data: test-pattern-subscribe-message\n\n');
+          done();
+        }
+
+        chunks++;
+      });
+
+    });
+
 });
 
 
