@@ -5,7 +5,7 @@
   <img src="docs/screencast.gif">
 </p>
 
-A [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable) that convert messages received over a [Redis PUBSUB channel](http://redis.io/topics/pubsub) to valid [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp).
+A [Readable Stream](http://nodejs.org/api/stream.html#stream_class_stream_readable) that converts messages received over a [Redis PUBSUB channel](http://redis.io/topics/pubsub) to valid [HTML5 Server-Sent Events](http://www.w3schools.com/html/html5_serversentevents.asp).
 
 Features:
 
