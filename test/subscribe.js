@@ -3,7 +3,9 @@
  * Module dependencies
  */
 
-var redis = require('redis').createClient();
+var Redis = require('ioredis');
+var redis = new Redis();
+
 var subscribe = require('../lib');
 
 
@@ -24,7 +26,7 @@ describe('Subscribe', function() {
 
     try {
       var s = subscribe({
-        channels: ['test'],
+        channels: 'test',
         retry: -1
       });
     } catch(e) { exception = e; }
@@ -34,7 +36,7 @@ describe('Subscribe', function() {
 
   it('Should get a Subscribe stream', function() {
     var s = subscribe({
-      channels: ['test']
+      channels: 'test'
     });
 
     s.should.be.an.instanceof.Subscribe;
@@ -43,7 +45,7 @@ describe('Subscribe', function() {
 
   it('Should get a Subscribe stream with Redis options specified', function() {
     var s = subscribe({
-      channels: ['test'],
+      channels: 'test',
       host: '127.0.0.1',
       port: 6379,
       clientOptions: { enable_offline_queue: false }
@@ -58,7 +60,7 @@ describe('Subscribe', function() {
     var chunks = 0;
 
     var s = subscribe({
-      channels: ['test']
+      channels: 'test'
     });
 
     s.on('ready', function() {
@@ -84,7 +86,7 @@ describe('Subscribe', function() {
     var chunks = 0;
 
     var s = subscribe({
-      channels: ['named-channel'],
+      channels: 'named-channel',
       channelsAsEvents: true
     });
 
@@ -116,7 +118,7 @@ describe('Subscribe', function() {
       var chunks = 0;
 
       var s = subscribe({
-        channels: ['test*'],
+        channels: 'test*',
         patternSubscribe: true
       });
 
@@ -140,5 +142,3 @@ describe('Subscribe', function() {
     });
 
 });
-
-
