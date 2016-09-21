@@ -9,7 +9,7 @@
     "url": "git://github.com/mpangrazzi/redis-subscribe-sse.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -t 10000"
+    "test": "./node_modules/.bin/standard '/lib/**/*.js' && ./node_modules/.bin/mocha -t 10000"
   },
   "engines": {
     "node": ">=4.5.0"
@@ -20,7 +20,8 @@
     "koa": "^0.12.2",
     "koa-router": "^3.4.0",
     "mocha": "^1.21.4",
-    "should": "^4.0.4"
+    "should": "^4.0.4",
+    "standard": "^8.1.0"
   },
   "dependencies": {
     "debug": "^2.0.0",
