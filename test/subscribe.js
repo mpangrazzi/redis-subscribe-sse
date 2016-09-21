@@ -16,6 +16,18 @@ test('Should throw if options `channels` is missing', t => {
 })
 
 
+test('Should throw if options `ioredis` is not an object', t => {
+  let exception = t.throws(() => {
+    let s = subscribe({
+      channels: 'test',
+      ioredis: 'invalid'
+    })
+  })
+
+  t.is(exception.message, 'option `ioredis` must be an Object')
+})
+
+
 test('Should throw if options `retry` is invalid', t => {
   let exception = t.throws(() => {
     let s = subscribe({
@@ -223,3 +235,40 @@ test.cb('Should stream Redis published messages as SSE (using PSUBSCRIBE)', t =>
     chunks++
   })
 })
+
+
+test.cb('Should close underlying redis connection correctly', t => {
+
+  let s = subscribe({
+    channels: 'close'
+  })
+
+  s.client.on('end', () => {
+    t.pass()
+    t.end()
+  })
+
+  s.on('ready', () => {
+    s.close()
+  })
+
+})
+
+
+test.cb('Should call callback after close (if passed)', t => {
+
+  let s = subscribe({
+    channels: 'close'
+  })
+
+  s.on('ready', () => {
+
+    s.close(() => {
+      t.pass()
+      t.end()
+    })
+
+  })
+
+})
+
