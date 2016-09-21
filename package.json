@@ -20,8 +20,6 @@
     "express": "^4.9.5",
     "koa": "^0.12.2",
     "koa-router": "^3.4.0",
-    "mocha": "^1.21.4",
-    "should": "^4.0.4",
     "standard": "^8.1.0"
   },
   "dependencies": {
