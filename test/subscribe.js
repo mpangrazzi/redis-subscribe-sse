@@ -1,4 +1,3 @@
-
 import test from 'ava'
 import subscribe from '..'
 import stream from 'stream'
@@ -39,7 +38,7 @@ test('Should get a Subscribe stream with default options', t => {
 })
 
 
-test('Should get a Subscribe stream with custom options specified', t => {
+test('Should get a Subscribe stream with custom options', t => {
   let s = subscribe({
     channels: ['a', 'lot', 'of', 'channels'],
     host: '192.168.0.10',
@@ -88,7 +87,41 @@ test.cb('Should stream Redis published messages as SSE', t => {
 })
 
 
-test.cb('Should associate Redis channels as SSE events if `channelsAsEvents` option is true', t => {
+test.cb('Should stream Redis published messages as SSE events (multiple channels)', t => {
+
+  t.plan(3)
+
+  let chunks = 0
+
+  let s = subscribe({
+    channels: ['channel1', 'channel2']
+  })
+
+  s.on('ready', () => {
+    redis.publish('channel1', 'test-message1')
+    redis.publish('channel2', 'test-message2')
+  })
+
+  s.on('data', (data) => {
+    if (chunks === 0) {
+      t.deepEqual(data.toString(), 'retry: 5000\n')
+    }
+
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'data: test-message1\n\n')
+    }
+
+    if (chunks === 2) {
+      t.deepEqual(data.toString(), 'data: test-message2\n\n')
+      t.end()
+    }
+
+    chunks++
+  })
+})
+
+
+test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` option is true', t => {
   t.plan(3)
 
   let chunks = 0
@@ -112,6 +145,48 @@ test.cb('Should associate Redis channels as SSE events if `channelsAsEvents` opt
     }
 
     if (chunks === 2) {
+      t.deepEqual(data.toString(), 'data: test-message\n\n')
+      t.end()
+    }
+
+    chunks++
+  })
+})
+
+
+test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` option is true (multiple channels)', t => {
+  t.plan(5)
+
+  let chunks = 0
+
+  let s = subscribe({
+    channels: ['named-channel1', 'named-channel2'],
+    channelsAsEvents: true
+  })
+
+  s.on('ready', () => {
+    redis.publish('named-channel1', 'test-message')
+    redis.publish('named-channel2', 'test-message')
+  })
+
+  s.on('data', (data) => {
+    if (chunks === 0) {
+      t.deepEqual(data.toString(), 'retry: 5000\n')
+    }
+
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'event: named-channel1\n')
+    }
+
+    if (chunks === 2) {
+      t.deepEqual(data.toString(), 'data: test-message\n\n')
+    }
+
+    if (chunks === 3) {
+      t.deepEqual(data.toString(), 'event: named-channel2\n')
+    }
+
+    if (chunks === 4) {
       t.deepEqual(data.toString(), 'data: test-message\n\n')
       t.end()
     }
