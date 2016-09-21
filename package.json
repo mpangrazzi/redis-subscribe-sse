@@ -9,7 +9,9 @@
     "url": "git://github.com/mpangrazzi/redis-subscribe-sse.git"
   },
   "scripts": {
-    "test": "ava --verbose"
+    "test": "ava --verbose",
+    "lint": "./node_modules/.bin/standard",
+    "coverage": "nyc ava"
   },
   "engines": {
     "node": ">=4.5.0"
@@ -20,6 +22,7 @@
     "express": "^4.9.5",
     "koa": "^0.12.2",
     "koa-router": "^3.4.0",
+    "nyc": "^8.3.0",
     "standard": "^8.1.0"
   },
   "dependencies": {
