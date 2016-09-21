@@ -1,144 +1,150 @@
 
-/**
- * Module dependencies
- */
+import test from 'ava'
+import subscribe from '..'
+import stream from 'stream'
+import Redis from 'ioredis'
 
-var Redis = require('ioredis');
-var redis = new Redis();
-
-var subscribe = require('../lib');
+const Readable = stream.Readable
+const redis = new Redis()
 
 
-describe('Subscribe', function() {
+test('Should throw if options `channels` is missing', t => {
+  let exception = t.throws(() => {
+    let s = subscribe()
+  })
 
-  it('Should throw if options `channels` is missing', function() {
-    var exception;
+  t.is(exception.message, 'option `channels` is required and must be an Array or a String')
+})
 
-    try {
-      var s = subscribe({});
-    } catch(e) { exception = e; }
 
-    exception.message.should.equal('option `channels` is required and must be an Array or a String');
-  });
-
-  it('Should throw if options `retry` is invalid', function() {
-    var exception;
-
-    try {
-      var s = subscribe({
-        channels: 'test',
-        retry: -1
-      });
-    } catch(e) { exception = e; }
-
-    exception.message.should.equal('option `sse.retry` must be a Number greater than 0');
-  });
-
-  it('Should get a Subscribe stream', function() {
-    var s = subscribe({
-      channels: 'test'
-    });
-
-    s.should.be.an.instanceof.Subscribe;
-    s.channels.should.eql(['test']);
-  });
-
-  it('Should get a Subscribe stream with Redis options specified', function() {
-    var s = subscribe({
+test('Should throw if options `retry` is invalid', t => {
+  let exception = t.throws(() => {
+    let s = subscribe({
       channels: 'test',
-      host: '127.0.0.1',
-      port: 6379,
-      clientOptions: { enable_offline_queue: false }
-    });
+      retry: -1
+    })
+  })
 
-    s.should.be.an.instanceof.Subscribe;
-    s.channels.should.eql(['test']);
-  });
+  t.is(exception.message, 'option `sse.retry` must be a Number greater than 0')
+})
 
-  it('Should stream Redis published messages as SSE', function(done) {
 
-    var chunks = 0;
+test('Should get a Subscribe stream with default options', t => {
+  let s = subscribe({
+    channels: ['a', 'lot', 'of', 'channels'],
+  })
 
-    var s = subscribe({
-      channels: 'test'
-    });
+  t.deepEqual(s.host, '127.0.0.1')
+  t.deepEqual(s.port, 6379)
+})
 
-    s.on('ready', function() {
-      redis.publish('test', 'test-message');
-    });
 
-    s.on('data', function(data) {
-      if (chunks === 0) {
-        data.toString().should.equal('retry: 5000\n');
-      }
+test('Should get a Subscribe stream with custom options specified', t => {
+  let s = subscribe({
+    channels: ['a', 'lot', 'of', 'channels'],
+    host: '192.168.0.10',
+    port: '9999',
+    retry: 7000,
+    ioredis: {
+      enableOfflineQueue: false
+    }
+  })
 
-      if (chunks === 1) {
-        data.toString().should.equal('data: test-message\n\n');
-        done();
-      }
+  t.deepEqual(s.channels, ['a', 'lot', 'of', 'channels'])
+  t.deepEqual(s.host, '192.168.0.10')
+  t.deepEqual(s.port, 9999)
+  t.deepEqual(s.retry, 7000)
+  t.deepEqual(s.ioredis, {
+    enableOfflineQueue: false
+  })
+})
 
-      chunks++;
-    });
 
-  });
+test.cb('Should stream Redis published messages as SSE', t => {
+  t.plan(2)
 
-  it('Should associate Redis channels as SSE events if `channelsAsEvents` option is true', function(done) {
-    var chunks = 0;
+  let chunks = 0
 
-    var s = subscribe({
-      channels: 'named-channel',
-      channelsAsEvents: true
-    });
+  let s = subscribe({
+    channels: 'test'
+  })
 
-    s.on('ready', function() {
-      redis.publish('named-channel', 'test-message');
-    });
+  s.on('ready', () => {
+    redis.publish('test', 'test-message')
+  })
 
-    s.on('data', function(data) {
-      if (chunks === 0) {
-        data.toString().should.equal('retry: 5000\n');
-      }
+  s.on('data', (data) => {
+    if (chunks === 0) {
+      t.deepEqual(data.toString(), 'retry: 5000\n')
+    }
 
-      if (chunks === 1) {
-        data.toString().should.equal('event: named-channel\n');
-      }
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'data: test-message\n\n')
+      t.end()
+    }
 
-      if (chunks === 2) {
-        data.toString().should.equal('data: test-message\n\n');
-        done();
-      }
+    chunks++
+  })
+})
 
-      chunks++;
-    });
 
-  });
+test.cb('Should associate Redis channels as SSE events if `channelsAsEvents` option is true', t => {
+  t.plan(3)
 
-  it('Should stream Redis published messages as SSE (using PSUBSCRIBE)', function(done) {
+  let chunks = 0
 
-      var chunks = 0;
+  let s = subscribe({
+    channels: 'named-channel',
+    channelsAsEvents: true
+  })
 
-      var s = subscribe({
-        channels: 'test*',
-        patternSubscribe: true
-      });
+  s.on('ready', () => {
+    redis.publish('named-channel', 'test-message')
+  })
 
-      s.on('ready', function() {
-        redis.publish('test-pattern-subscribe', 'test-pattern-subscribe-message');
-      });
+  s.on('data', (data) => {
+    if (chunks === 0) {
+      t.deepEqual(data.toString(), 'retry: 5000\n')
+    }
 
-      s.on('data', function(data) {
-        if (chunks === 0) {
-          data.toString().should.equal('retry: 5000\n');
-        }
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'event: named-channel\n')
+    }
 
-        if (chunks === 1) {
-          data.toString().should.equal('data: test-pattern-subscribe-message\n\n');
-          done();
-        }
+    if (chunks === 2) {
+      t.deepEqual(data.toString(), 'data: test-message\n\n')
+      t.end()
+    }
 
-        chunks++;
-      });
+    chunks++
+  })
+})
 
-    });
 
-});
+test.cb('Should stream Redis published messages as SSE (using PSUBSCRIBE)', t => {
+  t.plan(2)
+
+  let chunks = 0
+
+  let s = subscribe({
+    channels: 'pattern*',
+    patternSubscribe: true
+  })
+
+  s.on('ready', () => {
+    redis.publish('pattern-subscribe', 'test-pattern-subscribe-message')
+  })
+
+  s.on('data', (data) => {
+    if (chunks === 0) {
+      t.deepEqual(data.toString(), 'retry: 5000\n')
+    }
+
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'data: test-pattern-subscribe-message\n\n')
+      t.end()
+    }
+
+    chunks++
+  })
+})

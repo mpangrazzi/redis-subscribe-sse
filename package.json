@@ -9,12 +9,13 @@
     "url": "git://github.com/mpangrazzi/redis-subscribe-sse.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/standard '/lib/**/*.js' && ./node_modules/.bin/mocha -t 10000"
+    "test": "ava --verbose"
   },
   "engines": {
     "node": ">=4.5.0"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "co-fs": "^1.2.0",
     "express": "^4.9.5",
     "koa": "^0.12.2",
