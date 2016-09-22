@@ -79,11 +79,16 @@ $ DEBUG=redis-subscribe-sse node ./examples/express
 
 ### Server side
 
-See `/examples` folder for **Koa** and **Express** examples. You can run them with:
+See `/examples` folder. You'll find examples using [redis-subscribe-sse](https://github.com/mpangrazzi/redis-subscribe-sse) with:
+
+  * [Koa](http://koajs.com) - [Example]()
+  * [Express](http://expressjs.com) - [Example]()
+  * Plain node [http](http://nodejs.org/api/http.html) server - [Example]()
+  * CORS (EventSource on a different host/port) - [Example]()
 
 ```
 $ node ./examples/express
-$ node --harmony ./examples/koa
+$ node ./examples/koa
 ```
 
 ### Client side
