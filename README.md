@@ -1,4 +1,3 @@
-
 redis-subscribe-sse
 ==================
 
@@ -42,9 +41,8 @@ To obtain a `redis-subscribe-stream` instance, you have to do:
 
 ```javascript
 
-  var subscribe = require('redis-subscribe-sse');
-
-  var stream = subscribe({ /* options */ });
+var subscribe = require('redis-subscribe-sse');
+var stream = subscribe({ /* options */ });
 
 ```
 
@@ -63,7 +61,18 @@ stream available `options` are:
 
 ## Tests
 
-`npm test`
+```
+npm test
+```
+
+
+## Debug
+
+This module is built with [debug](https://github.com/visionmedia/debug). If you want to see debug messages:
+
+```
+$ DEBUG=redis-subscribe-sse node ./examples/express
+```
 
 
 ## Examples
@@ -73,8 +82,8 @@ stream available `options` are:
 See `/examples` folder for **Koa** and **Express** examples. You can run them with:
 
 ```
-  $ node ./examples/express
-  $ node --harmony ./examples/koa
+$ node ./examples/express
+$ node --harmony ./examples/koa
 ```
 
 ### Client side
