@@ -1,6 +1,8 @@
 redis-subscribe-sse
 ==================
 
+[![Build Status](https://travis-ci.org/mpangrazzi/redis-subscribe-sse.svg?branch=master)](https://travis-ci.org/mpangrazzi/redis-subscribe-sse)
+
 #### (from) Redis subscribe (to) HTML5 Server-Sent Events
 
 <p align="center">
@@ -16,10 +18,10 @@ Features:
 * Supports both `subscribe` and `psubscribe` modes
 
 We also provide examples (backend and frontend) with:
-  * [Koa](http://koajs.com) - [Example]()
-  * [Express](http://expressjs.com) - [Example]()
-  * Plain node [http](http://nodejs.org/api/http.html) server - [Example]()
-  * CORS (EventSource on a different host/port) - [Example]()
+  * [Koa](http://koajs.com) - [Example](https://github.com/mpangrazzi/redis-subscribe-sse/blob/master/examples/koa.js)
+  * [Express](http://expressjs.com) - [Example](https://github.com/mpangrazzi/redis-subscribe-sse/blob/master/examples/express.js)
+  * Plain node [http](http://nodejs.org/api/http.html) server - [Example](https://github.com/mpangrazzi/redis-subscribe-sse/blob/master/examples/http.js)
+  * CORS (EventSource on a different host/port) - [Example](https://github.com/mpangrazzi/redis-subscribe-sse/blob/master/examples/cors.js)
 
 
 ## Install
