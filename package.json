@@ -11,7 +11,7 @@
   "scripts": {
     "test": "ava --verbose",
     "lint": "./node_modules/.bin/standard",
-    "coverage": "nyc ava"
+    "coverage": "./node_modules/.bin/nyc ava"
   },
   "engines": {
     "node": ">=4.5.0"
@@ -22,7 +22,7 @@
     "express": "^4.14.0",
     "koa": "^1.2.4",
     "koa-logger": "^1.3.0",
-    "koa-route": "^2.4.2",
+    "koa-router": "^5.4.0",
     "nyc": "^8.3.0",
     "standard": "^8.1.0"
   },
