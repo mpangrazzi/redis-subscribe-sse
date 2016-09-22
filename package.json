@@ -1,6 +1,6 @@
 {
   "name": "redis-subscribe-sse",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Stream Redis subscribe events to client with SSE",
   "main": "index.js",
   "author": "Michele Pangrazzi <xmikex83@gmail.com>",
@@ -9,22 +9,26 @@
     "url": "git://github.com/mpangrazzi/redis-subscribe-sse.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -t 10000"
+    "test": "ava --verbose",
+    "lint": "./node_modules/.bin/standard",
+    "coverage": "./node_modules/.bin/nyc ava"
   },
   "engines": {
-    "node": "0.10.x || 0.11.x"
+    "node": ">=4.5.0"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "co-fs": "^1.2.0",
-    "express": "^4.9.5",
-    "koa": "^0.12.2",
-    "koa-router": "^3.4.0",
-    "mocha": "^1.21.4",
-    "should": "^4.0.4"
+    "express": "^4.14.0",
+    "koa": "^1.2.4",
+    "koa-logger": "^1.3.0",
+    "koa-router": "^5.4.0",
+    "nyc": "^8.3.0",
+    "standard": "^8.1.0"
   },
   "dependencies": {
     "debug": "^2.0.0",
-    "redis": "*"
+    "ioredis": "*"
   },
   "keywords": [
     "redis",
@@ -38,10 +42,5 @@
     "sse",
     "server-sent events"
   ],
-  "license": "MIT",
-  "jshintConfig": {
-    "esnext": true,
-    "expr": true,
-    "noyield": true
-  }
+  "license": "MIT"
 }
