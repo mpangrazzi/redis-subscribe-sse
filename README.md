@@ -57,6 +57,44 @@ stream available `options` are:
 - `retry` (Number, optional): SSE *retry* property. Usually a client tries to reconnect after 3-4 seconds after losing SSE connection. If you want to change that interval, you can set this property (in **ms**). Default: `5000`.
 - `channelsAsEvents`: (Boolean, optional): Associate Redis channel names to SSE *event* property. This way, on client side you can listen to names events instead of generic messages. See `examples/koa.js` for a detailed example. Default: `false`.
 - `patternSubscribe`: (Boolean, optional): Use Redis [PSUBSCRIBE](http://redis.io/commands/psubscribe) instead of SUBSCRIBE. Default: `false`.
+- `transform`: (Function, optional): It can be used for doing some message manipulation before pushing it to the stream. Signature is `(message, *callback)` and **it must returns a string** (See below).
+
+
+## Message manipulation
+
+The `transform` option is a function with this signature: `(message, callback)`. The callback is _optional_ and if passed it will allow to perform some _async_ message manipulation. Otherwise, it will do a _sync_ message manipulation.
+
+It could be useful if you need to do e.g. encoding/decoding operations before pushing message to the client.
+
+Some examples:
+
+#### Async message manipulation
+
+In this mode, you have to pass a callback function as the second argument to `transform`:
+
+```javascript
+let s = subscribe({
+  channels: 'transform-test',
+  transform: (msg, callback) => {
+    setTimeout(() => {
+      callback(`${msg} world`)
+    }, 100)
+  }
+})
+```
+
+#### Sync message manipulation
+
+In this mode, simply return the manipulated message from `transform` function:
+
+```javascript
+let s = subscribe({
+  channels: 'transform-test',
+  transform: (msg) => {
+    return `${msg} world`
+  }
+})
+```
 
 
 ## Tests

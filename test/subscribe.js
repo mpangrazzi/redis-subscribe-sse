@@ -7,7 +7,7 @@ const Readable = stream.Readable
 const redis = new Redis()
 
 
-test('Should throw if options `channels` is missing', t => {
+test('Should throw if option `channels` is missing', t => {
   let exception = t.throws(() => {
     let s = subscribe()
   })
@@ -16,7 +16,7 @@ test('Should throw if options `channels` is missing', t => {
 })
 
 
-test('Should throw if options `ioredis` is not an object', t => {
+test('Should throw if option `ioredis` is not an object', t => {
   let exception = t.throws(() => {
     let s = subscribe({
       channels: 'test',
@@ -25,6 +25,18 @@ test('Should throw if options `ioredis` is not an object', t => {
   })
 
   t.is(exception.message, 'option `ioredis` must be an Object')
+})
+
+
+test('Should throw if option `transform` is not a function', t => {
+  let exception = t.throws(() => {
+    let s = subscribe({
+      channels: 'test',
+      transform: []
+    })
+  })
+
+  t.is(exception.message, 'option `transform` must be a function')
 })
 
 
@@ -58,6 +70,9 @@ test('Should get a Subscribe stream with custom options', t => {
     retry: 7000,
     ioredis: {
       enableOfflineQueue: false
+    },
+    transform: (msg) => {
+      return msg.toUpperCase()
     }
   })
 
@@ -65,6 +80,7 @@ test('Should get a Subscribe stream with custom options', t => {
   t.deepEqual(s.host, '192.168.0.10')
   t.deepEqual(s.port, 9999)
   t.deepEqual(s.retry, 7000)
+  t.true(typeof s.transform == 'function')
   t.deepEqual(s.ioredis, {
     enableOfflineQueue: false
   })
@@ -101,7 +117,7 @@ test.cb('Should stream Redis published messages as SSE', t => {
 
 test.cb('Should stream Redis published messages as SSE events (multiple channels)', t => {
 
-  t.plan(3)
+  t.plan(2)
 
   let chunks = 0
 
@@ -115,10 +131,6 @@ test.cb('Should stream Redis published messages as SSE events (multiple channels
   })
 
   s.on('data', (data) => {
-    if (chunks === 0) {
-      t.deepEqual(data.toString(), 'retry: 5000\n')
-    }
-
     if (chunks === 1) {
       t.deepEqual(data.toString(), 'data: test-message1\n\n')
     }
@@ -134,7 +146,7 @@ test.cb('Should stream Redis published messages as SSE events (multiple channels
 
 
 test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` option is true', t => {
-  t.plan(3)
+  t.plan(2)
 
   let chunks = 0
 
@@ -148,10 +160,6 @@ test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` o
   })
 
   s.on('data', (data) => {
-    if (chunks === 0) {
-      t.deepEqual(data.toString(), 'retry: 5000\n')
-    }
-
     if (chunks === 1) {
       t.deepEqual(data.toString(), 'event: named-channel\n')
     }
@@ -167,7 +175,7 @@ test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` o
 
 
 test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` option is true (multiple channels)', t => {
-  t.plan(5)
+  t.plan(4)
 
   let chunks = 0
 
@@ -182,10 +190,6 @@ test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` o
   })
 
   s.on('data', (data) => {
-    if (chunks === 0) {
-      t.deepEqual(data.toString(), 'retry: 5000\n')
-    }
-
     if (chunks === 1) {
       t.deepEqual(data.toString(), 'event: named-channel1\n')
     }
@@ -209,7 +213,7 @@ test.cb('Should associate Redis channels to SSE events when `channelsAsEvents` o
 
 
 test.cb('Should stream Redis published messages as SSE (using PSUBSCRIBE)', t => {
-  t.plan(2)
+  t.plan(1)
 
   let chunks = 0
 
@@ -223,12 +227,64 @@ test.cb('Should stream Redis published messages as SSE (using PSUBSCRIBE)', t =>
   })
 
   s.on('data', (data) => {
-    if (chunks === 0) {
-      t.deepEqual(data.toString(), 'retry: 5000\n')
-    }
-
     if (chunks === 1) {
       t.deepEqual(data.toString(), 'data: test-pattern-subscribe-message\n\n')
+      t.end()
+    }
+
+    chunks++
+  })
+})
+
+
+test.cb('Should do a sync transform on received Redis messages before pushing them', t => {
+  t.plan(1)
+
+  let chunks = 0
+
+  let s = subscribe({
+    channels: 'transform',
+    transform: (msg) => {
+      return `${msg} world`
+    }
+  })
+
+  s.on('ready', () => {
+    redis.publish('transform', 'hello')
+  })
+
+  s.on('data', (data) => {
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'data: hello world\n\n')
+      t.end()
+    }
+
+    chunks++
+  })
+})
+
+
+test.cb('Should do an async transform on received Redis messages before pushing them', t => {
+  t.plan(1)
+
+  let chunks = 0
+
+  let s = subscribe({
+    channels: 'transform',
+    transform: (msg, callback) => {
+      setTimeout(() => {
+        callback(`${msg} world`)
+      }, 100)
+    }
+  })
+
+  s.on('ready', () => {
+    redis.publish('transform', 'hello')
+  })
+
+  s.on('data', (data) => {
+    if (chunks === 1) {
+      t.deepEqual(data.toString(), 'data: hello world\n\n')
       t.end()
     }
 
