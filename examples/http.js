@@ -1,11 +1,12 @@
+'use strict'
 
 /**
  * Module dependencies
  */
 
-var http = require('http');
-var fs = require('fs');
-var path = require('path');
+const http = require('http')
+const fs = require('fs')
+const path = require('path')
 
 
 /**
@@ -17,36 +18,33 @@ var path = require('path');
 
 // stream
 
-var subscribe = require('../lib');
+const subscribe = require('..')
 
 
 // http server
 
-var server = http.createServer(function(req, res) {
-
-  var sse = subscribe({
+let server = http.createServer((req, res) => {
+  let sse = subscribe({
     channels: 'test-http'
-  });
+  })
 
   if (req.url === '/') {
-    var index = path.join(__dirname, './index.html');
-    fs.createReadStream(index).pipe(res);
+    let index = path.join(__dirname, './index.html')
+    res.setHeader('Content-Type', 'text/html charset=utf-8')
+    fs.createReadStream(index).pipe(res)
   }
 
   if (req.url === '/stream') {
-    req.setTimeout(0);
+    req.setTimeout(Number.MAX_VALUE)
 
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Content-Type', 'text/event-stream')
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('Connection', 'keep-alive')
 
-    sse.pipe(res).on('close', function() {
-      sse.close();
-    });
+    sse.pipe(res)
   }
+})
 
-});
-
-server.listen(3000, function() {
-  console.log('Listening on port 3000');
-});
+server.listen(3000, () => {
+  console.log('HTTP server listening on port 3000')
+})

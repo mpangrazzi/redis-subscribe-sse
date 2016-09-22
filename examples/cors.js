@@ -1,11 +1,12 @@
+'use strict'
 
 /**
  * Module dependencies
  */
 
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
 
 
 /**
@@ -17,44 +18,40 @@ var path = require('path');
 
 // stream
 
-var subscribe = require('../lib');
+const subscribe = require('..')
 
 
 // express app
 
-var frontend = express();
-var backend = express();
+let frontend = express()
+let backend = express()
 
-frontend.get('/', function(req, res) {
-  var index = path.join(__dirname, './cors.html');
-  fs.createReadStream(index).pipe(res);
-});
+frontend.get('/', (req, res) => {
+  var index = path.join(__dirname, './cors.html')
+  fs.createReadStream(index).pipe(res)
+})
 
-backend.get('/stream', function(req, res) {
-
+backend.get('/stream', (req, res) => {
   var sse = subscribe({
     channels: 'test-cors'
-  });
+  })
 
-  req.socket.setTimeout(0);
+  req.socket.setTimeout(Number.MAX_VALUE)
 
   res.set({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
     'Access-Control-Allow-Origin': '*'
-  });
+  })
 
-  sse.pipe(res).on('close', function() {
-    sse.close();
-  });
+  sse.pipe(res)
+})
 
-});
-
-frontend.listen(3000, function() {
-  console.log('Frontend listening on port 3000');
-});
+frontend.listen(3000, () => {
+  console.log('Express (frontend) listening on port 3000')
+})
 
 backend.listen(4000, function() {
-  console.log('backend on port 4000');
-});
+  console.log('Express (backend) listening on port 4000')
+})

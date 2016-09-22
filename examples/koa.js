@@ -5,9 +5,9 @@
  */
 
 const Koa = require('koa')
-const fs = require('co-fs')
+const fs = require('fs')
 const path = require('path')
-const _ = require('koa-route')
+const Router = require('koa-router')
 const logger = require('koa-logger')
 
 
@@ -34,32 +34,31 @@ app.use(logger())
 
 // routes
 
-let routes = {
-  index: function *() {
-    this.body = fs.createReadStream(__dirname + '/index.html')
-  },
-  stream: function *() {
-    this.req.setTimeout(0)
-    this.type = 'text/event-stream; charset=utf-8'
+let router = new Router()
 
-    this.set('Cache-Control', 'no-cache')
-    this.set('Connection', 'keep-alive')
+router.get('/', function *() {
+  this.type = 'text/html; charset=utf-8'
+  this.body = fs.createReadStream(__dirname + '/index.html')
+})
 
-    let sse = subscribe({
-      channels: ['test-koa', 'test-koa1'],
-      retry: 10000,
-      host: '127.0.0.1',
-      port: 6379,
-      channelsAsEvents: true
-    })
+router.get('/stream', function *() {
+  this.req.setTimeout(Number.MAX_VALUE)
+  this.type = 'text/event-stream; charset=utf-8'
 
-    this.body = sse
-  }
-}
+  this.set('Cache-Control', 'no-cache')
+  this.set('Connection', 'keep-alive')
 
-app.use(_.get('/', routes.index))
-app.use(_.get('/stream', routes.stream))
+  this.body = subscribe({
+    channels: ['test-koa', 'test-koa1'],
+    retry: 10000,
+    host: '127.0.0.1',
+    port: 6379,
+    channelsAsEvents: true
+  })
+})
+
+app.use(router.routes())
 
 app.listen(3000, () => {
-  console.log('Listening on port 3000')
+  console.log('Koa listening on port 3000')
 })
