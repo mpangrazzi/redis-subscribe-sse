@@ -1,7 +1,7 @@
 redis-subscribe-sse
 ==================
 
-[![Build Status](https://travis-ci.org/mpangrazzi/redis-subscribe-sse.svg?branch=master)](https://travis-ci.org/mpangrazzi/redis-subscribe-sse)
+[![Build Status](https://travis-ci.org/mpangrazzi/redis-subscribe-sse.svg?branch=master)](https://travis-ci.org/mpangrazzi/redis-subscribe-sse) [![Coverage Status](https://coveralls.io/repos/github/mpangrazzi/redis-subscribe-sse/badge.svg?branch=master)](https://coveralls.io/github/mpangrazzi/redis-subscribe-sse?branch=master)
 
 #### (from) Redis subscribe (to) HTML5 Server-Sent Events
 

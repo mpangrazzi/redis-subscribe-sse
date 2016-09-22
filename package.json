@@ -11,7 +11,7 @@
   "scripts": {
     "test": "ava --verbose",
     "lint": "./node_modules/.bin/standard",
-    "coverage": "./node_modules/.bin/nyc ava"
+    "coverage": "./node_modules/.bin/nyc ava && nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
   },
   "engines": {
     "node": ">=4.5.0"
@@ -19,6 +19,7 @@
   "devDependencies": {
     "ava": "^0.16.0",
     "co-fs": "^1.2.0",
+    "coveralls": "^2.11.14",
     "express": "^4.14.0",
     "koa": "^1.2.4",
     "koa-logger": "^1.3.0",
