@@ -104,7 +104,7 @@ On client side, you can listen to SSE events using EventSource API (or a polyfil
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Michele Pangrazzi <xmikex83@gmail.com>
+Copyright (c) 2016 Michele Pangrazzi <<xmikex83@gmail.com>>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
