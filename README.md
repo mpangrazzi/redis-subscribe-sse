@@ -55,7 +55,7 @@ stream available `options` are:
 - `host` (String, optional): Redis host. Default: `127.0.0.1`
 - `port` (Number, optional): Redis port. Default: `6379`
 - `password` (String, optional): Redis password (if you need `AUTH`)
-- `clientOptions`: [node_redis](https://github.com/mranney/node_redis) client options
+- `ioredis`: [ioredis](https://github.com/luin/ioredis) client options
 - `retry` (Number, optional): SSE *retry* property. Usually a client tries to reconnect after 3-4 seconds after losing SSE connection. If you want to change that interval, you can set this property (in **ms**). Default: `5000`.
 - `channelsAsEvents`: (Boolean, optional): Associate Redis channel names to SSE *event* property. This way, on client side you can listen to names events instead of generic messages. See `examples/koa.js` for a detailed example. Default: `false`.
 - `patternSubscribe`: (Boolean, optional): Use Redis [PSUBSCRIBE](http://redis.io/commands/psubscribe) instead of SUBSCRIBE. Default: `false`.
