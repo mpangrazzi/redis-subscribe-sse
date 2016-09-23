@@ -39,12 +39,14 @@ A typical use case is when you want to notify the end of an *async* task to a cl
 
 ## How to use
 
-To obtain a `redis-subscribe-stream` instance, you have to do:
+To obtain a `redis-subscribe-sse` instance, you have to do:
 
 ```javascript
 
 var subscribe = require('redis-subscribe-sse');
 var stream = subscribe({ /* options */ });
+
+// use the stream! (see /examples)
 
 ```
 
