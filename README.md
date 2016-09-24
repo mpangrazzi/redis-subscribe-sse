@@ -66,7 +66,7 @@ stream available `options` are:
 
 ## Message manipulation
 
-Sometimes you need to some operation on the received messages before pushing them to the client. For example, you may need to do some encoding or decoding operations.
+Sometimes you need to some manipulations on the received messages before pushing them to the client. For example, you might need to do some encoding/decoding operations.
 
 The `transform` option is a function with this signature: `(message, callback)`. The callback is _optional_ and if passed it will allow to perform some _async_ message manipulation. Otherwise, it will do a _sync_ message manipulation.
 
