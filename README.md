@@ -1,9 +1,11 @@
 redis-subscribe-sse
 ==================
 
-[![Build Status](https://travis-ci.org/mpangrazzi/redis-subscribe-sse.svg?branch=master)](https://travis-ci.org/mpangrazzi/redis-subscribe-sse) [![Coverage Status](https://coveralls.io/repos/github/mpangrazzi/redis-subscribe-sse/badge.svg?branch=master)](https://coveralls.io/github/mpangrazzi/redis-subscribe-sse?branch=master)
+> (from) Redis subscribe (to) HTML5 Server-Sent Events
 
-#### (from) Redis subscribe (to) HTML5 Server-Sent Events
+[![npm version][npm-badge]][npm]
+[![build status][travis-badge]][travis]
+[![coverage][coveralls-badge]][coveralls]
 
 <p align="center">
   <img src="docs/screencast.gif">
@@ -190,3 +192,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+[npm-badge]: https://img.shields.io/npm/v/redis-subscribe-sse.svg
+[npm]: https://www.npmjs.com/package/redis-subscribe-sse
+[travis-badge]: https://img.shields.io/travis/mpangrazzi/redis-subscribe-sse.svg
+[travis]: https://travis-ci.org/mpangrazzi/redis-subscribe-sse
+[coveralls-badge]: https://img.shields.io/coveralls/mpangrazzi/redis-subscribe-sse.svg
+[coveralls]: https://coveralls.io/github/mpangrazzi/redis-subscribe-sse
